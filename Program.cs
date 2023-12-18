@@ -1,4 +1,7 @@
 
+using EventFinder.Data;
+using Microsoft.EntityFrameworkCore;
+
 namespace EventFinder
 {
     public class Program
@@ -13,6 +16,13 @@ namespace EventFinder
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddSingleton<DatabaseContext>(provider =>
+            {
+                var configuration = builder.Configuration.GetConnectionString("MongoDB");
+                return new DatabaseContext(configuration, "EventFinder-dev-db");
+            });
+
 
             var app = builder.Build();
 
