@@ -1,5 +1,6 @@
 ﻿using EventFinder.Data;
 using EventFinder.Models;
+using EventFinder.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 
@@ -9,30 +10,18 @@ namespace EventFinder.Controllers
     [ApiController]
     public class EventController : ControllerBase
     {
-        private readonly IMongoCollection<Event> _eventCollection;
+        private readonly IEventService _eventService;
 
-        public EventController(DatabaseContext databaseContext)
+        public EventController(IEventService eventService)
         {
-            _eventCollection = databaseContext.Events;
+            _eventService = eventService;
         }
 
         [HttpPost]
         public IActionResult CreateEvent([FromBody] Event newEvent)
         {
-            try
-            {
-                newEvent.Id = Guid.NewGuid();
-                newEvent.CreatedDate = DateTime.UtcNow;
-
-                _eventCollection.InsertOne(newEvent);
-
-                return Ok(new { Message = "Event created successfully", EventId = newEvent.Id });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { Message = "Error creating event", Error = ex.Message });
-            }
+            var result = _eventService.CreateEvent(newEvent);
+            return Ok(result);
         }
-
     }
 }

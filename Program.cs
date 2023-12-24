@@ -1,5 +1,7 @@
 
 using EventFinder.Data;
+using EventFinder.Services;
+using EventFinder.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace EventFinder
@@ -17,7 +19,8 @@ namespace EventFinder
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            builder.Services.AddSingleton<DatabaseContext>(provider =>
+            builder.Services.AddTransient<IEventService, EventService>();
+            builder.Services.AddTransient<DatabaseContext>(provider =>
             {
                 var configuration = builder.Configuration.GetConnectionString("MongoDB");
                 return new DatabaseContext(configuration, "EventFinder-dev-db");
