@@ -64,7 +64,7 @@ namespace EventFinder.Services
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error looking for all ids, error: {ex}");
+                throw new Exception($"Error looking for all event ids, error: {ex}");
             }
         }
 
