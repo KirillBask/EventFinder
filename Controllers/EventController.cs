@@ -1,5 +1,6 @@
 ﻿using EventFinder.Data;
 using EventFinder.Models;
+using EventFinder.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 
@@ -9,30 +10,101 @@ namespace EventFinder.Controllers
     [ApiController]
     public class EventController : ControllerBase
     {
-        private readonly IMongoCollection<Event> _eventCollection;
+        private readonly IEventService _eventService;
 
-        public EventController(DatabaseContext databaseContext)
+        public EventController(IEventService eventService)
         {
-            _eventCollection = databaseContext.Events;
+            _eventService = eventService;
         }
 
-        [HttpPost]
-        public IActionResult CreateEvent([FromBody] Event newEvent)
+        [HttpPost("CreateEvent")]
+        public async Task<ActionResult<Event>> CreateEvent([FromBody] Event newEvent)
         {
             try
             {
-                newEvent.Id = Guid.NewGuid();
-                newEvent.CreatedDate = DateTime.UtcNow;
-
-                _eventCollection.InsertOne(newEvent);
-
-                return Ok(new { Message = "Event created successfully", EventId = newEvent.Id });
+                var result = await _eventService.CreateEvent(newEvent);
+                return Ok(result);
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { Message = "Error creating event", Error = ex.Message });
+                return BadRequest($"Error creating event: {ex.Message}");
             }
         }
 
+        [HttpGet("GetEventById/{id}")]
+        public async Task<ActionResult<Event>> GetEventById(Guid id)
+        {
+            try
+            {
+                var result = await _eventService.GetEventById(id);
+                if (result == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error getting event: {ex.Message}");
+            }
+        }
+
+        [HttpGet("GetAllEvents")]
+        public async Task<ActionResult<List<Event>>> GetAllEvents()
+        {
+            try
+            {
+                var result = await _eventService.GetAllEvents();
+                if (result == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error getting all events, error: {ex.Message}");
+            }
+        }
+
+        [HttpPut("UpdateEvent")]
+        public async Task<ActionResult<Event>> UpdateEvent(Guid id, Event eventToUpdate)
+        {
+            try
+            {
+                var result = await _eventService.UpdateEvent(id, eventToUpdate);
+                if (result == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(eventToUpdate);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error updating event: {ex.Message}");
+            }
+        }
+
+        [HttpDelete("DeleteEvent")]
+        public async Task<ActionResult<Event>> DeleteEvent(Guid id)
+        {
+            try
+            {
+                var result = await _eventService.DeleteEvent(id);
+                if (result == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error deleting event: {ex.Message}");
+            }
+        }
     }
 }
