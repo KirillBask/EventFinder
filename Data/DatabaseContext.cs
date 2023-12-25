@@ -1,7 +1,6 @@
 ﻿using EventFinder.Models;
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
-using System.Xml;
 
 namespace EventFinder.Data
 {
@@ -25,14 +24,9 @@ namespace EventFinder.Data
             get { return _database.GetCollection<EventType>("EventTypes"); }
         }
 
-        public IMongoCollection<Organiser> Organisers
+        public IMongoCollection<User> Users
         {
-            get { return _database.GetCollection<Organiser>("Organisers"); }
-        }
-
-        public IMongoCollection<Participant> Participants
-        {
-            get { return _database.GetCollection<Participant>("Participants"); }
+            get { return _database.GetCollection<User>("Users"); }
         }
     }
 }
