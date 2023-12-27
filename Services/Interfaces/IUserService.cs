@@ -9,6 +9,6 @@ namespace EventFinder.Services.Interfaces
         public Task<User> DeleteUser(Guid id);
         public Task<User> GetUserById(Guid id);
         public Task<List<User>> GetAllUsers();
-        public Task<User> AddUserToEvent(Guid userId, Guid eventId);
+        public Task<Event> AddUserToEvent(Guid userId, Guid eventId);
     }
 }

@@ -14,7 +14,7 @@ namespace EventFinder.Services
             _eventCollection = eventCollection;
         }
 
-        public async Task<User> AddUserToEvent(Guid userId, Guid eventId)
+        public async Task<Event> AddUserToEvent(Guid userId, Guid eventId)
         {
             try
             {
@@ -24,10 +24,10 @@ namespace EventFinder.Services
                 if (userEvent != null)
                 {
                     userEvent.Participants.Add(userId);
+                    return userEvent;
                 }
-                var userCursor = await _userCollection.FindAsync(result => result.Id == userId);
-                var user = await userCursor.FirstOrDefaultAsync();
-                return user;
+
+                return null;
             }
             catch (Exception ex)
             {
