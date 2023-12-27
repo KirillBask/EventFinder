@@ -84,7 +84,7 @@ namespace EventFinder.Controllers
         }
 
         [HttpPut("UpdateUser")]
-        public async Task<ActionResult<User>> UpdateUser(Guid id, User userToUpdate)
+        public async Task<ActionResult<User>> UpdateUser(Guid id, [FromBody] User userToUpdate)
         {
             try
             {
